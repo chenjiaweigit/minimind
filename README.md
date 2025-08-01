@@ -224,7 +224,7 @@ MiniMind2系列旧模型均经过权重映射+（微调训练）QKVO线性层校
 ### 第0步
 
 ```bash
-git clone https://github.com/jingyaogong/minimind.git
+git clone https://github.com/chenjiaweigit/minimind.git
 ```
 
 ## Ⅰ 测试已有模型效果
