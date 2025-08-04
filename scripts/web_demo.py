@@ -1,6 +1,7 @@
 import random
 import re
 from threading import Thread
+import os
 
 import torch
 import numpy as np
@@ -97,6 +98,9 @@ def process_assistant_content(content):
 
 @st.cache_resource
 def load_model_tokenizer(model_path):
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"模型路径不存在: {model_path}\n请确保模型文件夹位于项目根目录，或在侧边栏选择API模式。")
+
     model = AutoModelForCausalLM.from_pretrained(
         model_path,
         trust_remote_code=True
@@ -168,12 +172,15 @@ if model_source == "API":
     api_key = st.sidebar.text_input("API Key", value="none", type="password")
     slogan = f"Hi, I'm {api_model_name}"
 else:
+    # 获取当前脚本所在目录的父目录（项目根目录）
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     MODEL_PATHS = {
-        "MiniMind2-R1 (0.1B)": ["../MiniMind2-R1", "MiniMind2-R1"],
-        "MiniMind2-Small-R1 (0.02B)": ["../MiniMind2-Small-R1", "MiniMind2-Small-R1"],
-        "MiniMind2 (0.1B)": ["../MiniMind2", "MiniMind2"],
-        "MiniMind2-MoE (0.15B)": ["../MiniMind2-MoE", "MiniMind2-MoE"],
-        "MiniMind2-Small (0.02B)": ["../MiniMind2-Small", "MiniMind2-Small"]
+        "MiniMind2-R1 (0.1B)": [os.path.join(project_root, "MiniMind2-R1"), "MiniMind2-R1"],
+        "MiniMind2-Small-R1 (0.02B)": [os.path.join(project_root, "MiniMind2-Small-R1"), "MiniMind2-Small-R1"],
+        "MiniMind2 (0.1B)": [os.path.join(project_root, "MiniMind2"), "MiniMind2"],
+        "MiniMind2-MoE (0.15B)": [os.path.join(project_root, "MiniMind2-MoE"), "MiniMind2-MoE"],
+        "MiniMind2-Small (0.02B)": [os.path.join(project_root, "MiniMind2-Small"), "MiniMind2-Small"]
     }
 
     selected_model = st.sidebar.selectbox('Models', list(MODEL_PATHS.keys()), index=2)  # 默认选择 MiniMind2
